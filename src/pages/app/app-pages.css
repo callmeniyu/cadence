@@ -1,0 +1,21 @@
+.sf-filter-bar { display: flex; gap: var(--sf-space-3); flex-wrap: wrap; align-items: center; margin-bottom: var(--sf-space-4); }
+.sf-filter-bar .sf-input, .sf-filter-bar .sf-select { max-width: 220px; }
+.sf-search-input-wrap { position: relative; flex: 1; min-width: 200px; max-width: 320px; }
+.sf-search-input-wrap svg { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: var(--sf-gray-400); }
+.sf-search-input-wrap input { padding-left: 34px; }
+.sf-detail-grid { display: grid; grid-template-columns: 2fr 1fr; gap: var(--sf-space-5); align-items: start; }
+@media (max-width: 900px) { .sf-detail-grid { grid-template-columns: 1fr; } }
+.sf-timeline-item { display: flex; gap: var(--sf-space-3); padding: var(--sf-space-3) 0; border-bottom: 1px solid var(--sf-border); }
+.sf-timeline-item:last-child { border-bottom: none; }
+.sf-timeline-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--sf-brand-500); margin-top: 6px; flex-shrink: 0; }
+.sf-cal-grid { display: grid; grid-template-columns: 60px repeat(7, 1fr); border: 1px solid var(--sf-border); border-radius: var(--sf-radius-md); overflow: hidden; background: var(--sf-surface); }
+.sf-cal-head { padding: var(--sf-space-2); text-align: center; font-size: var(--sf-fs-xs); font-weight: 700; background: var(--sf-gray-50); border-bottom: 1px solid var(--sf-border); border-left: 1px solid var(--sf-border); }
+.sf-cal-time-label { padding: 4px; font-size: 10px; color: var(--sf-text-muted); text-align: right; border-top: 1px solid var(--sf-border); }
+.sf-cal-cell { min-height: 44px; border-top: 1px solid var(--sf-border); border-left: 1px solid var(--sf-border); position: relative; padding: 2px; }
+.sf-cal-appt { border-radius: 6px; padding: 2px 6px; font-size: 10px; font-weight: 700; color: #fff; margin-bottom: 2px; cursor: pointer; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.sf-cal-day-list { display: flex; flex-direction: column; gap: var(--sf-space-2); }
+.sf-cal-day-item { display: flex; gap: var(--sf-space-3); padding: var(--sf-space-3); border: 1px solid var(--sf-border); border-radius: var(--sf-radius-md); cursor: pointer; }
+.sf-cal-day-time { width: 76px; flex-shrink: 0; font-weight: 700; font-size: var(--sf-fs-sm); }
+.sf-settings-tabs-panel { padding-top: var(--sf-space-5); }
+.sf-avail-row { display: flex; align-items: center; gap: var(--sf-space-3); padding: var(--sf-space-2) 0; }
+.sf-avail-day-label { width: 100px; font-weight: 700; font-size: var(--sf-fs-sm); }

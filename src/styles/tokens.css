@@ -1,0 +1,103 @@
+:root {
+  /* Brand */
+  --sf-brand-50: #f2f6ff;
+  --sf-brand-100: #dde8ff;
+  --sf-brand-200: #b7cdff;
+  --sf-brand-300: #8facff;
+  --sf-brand-400: #5f86ff;
+  --sf-brand-500: #3a63f0;
+  --sf-brand-600: #2c4bd6;
+  --sf-brand-700: #2338a8;
+  --sf-brand-800: #1c2c80;
+  --sf-brand-900: #172358;
+
+  --sf-accent-500: #16b3a3;
+  --sf-accent-600: #0f9284;
+
+  /* Neutrals */
+  --sf-gray-0: #ffffff;
+  --sf-gray-50: #f8f9fc;
+  --sf-gray-100: #f1f3f9;
+  --sf-gray-200: #e4e7f0;
+  --sf-gray-300: #d0d5e2;
+  --sf-gray-400: #a4abc4;
+  --sf-gray-500: #7c84a3;
+  --sf-gray-600: #5b6280;
+  --sf-gray-700: #414761;
+  --sf-gray-800: #2a2e42;
+  --sf-gray-900: #191c2b;
+
+  /* Semantic */
+  --sf-success-500: #1fa971;
+  --sf-success-100: #e2f6ec;
+  --sf-warning-500: #d98b1a;
+  --sf-warning-100: #fdf1dd;
+  --sf-danger-500: #dd4b4b;
+  --sf-danger-100: #fbe6e6;
+  --sf-info-500: #3a63f0;
+  --sf-info-100: #e6ecff;
+  --sf-neutral-500: #7c84a3;
+  --sf-neutral-100: #eef0f6;
+
+  --sf-bg: var(--sf-gray-50);
+  --sf-surface: var(--sf-gray-0);
+  --sf-border: var(--sf-gray-200);
+  --sf-text: var(--sf-gray-900);
+  --sf-text-muted: var(--sf-gray-600);
+
+  /* Typography */
+  --sf-font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --sf-fs-xs: 0.75rem;
+  --sf-fs-sm: 0.8125rem;
+  --sf-fs-base: 0.9375rem;
+  --sf-fs-md: 1.0625rem;
+  --sf-fs-lg: 1.25rem;
+  --sf-fs-xl: 1.625rem;
+  --sf-fs-2xl: 2.125rem;
+  --sf-fs-3xl: 2.75rem;
+
+  /* Spacing scale (4px base) */
+  --sf-space-1: 0.25rem;
+  --sf-space-2: 0.5rem;
+  --sf-space-3: 0.75rem;
+  --sf-space-4: 1rem;
+  --sf-space-5: 1.5rem;
+  --sf-space-6: 2rem;
+  --sf-space-7: 2.5rem;
+  --sf-space-8: 3rem;
+  --sf-space-9: 4rem;
+
+  /* Radius */
+  --sf-radius-sm: 6px;
+  --sf-radius-md: 10px;
+  --sf-radius-lg: 16px;
+  --sf-radius-xl: 22px;
+  --sf-radius-pill: 999px;
+
+  /* Shadows */
+  --sf-shadow-sm: 0 1px 2px rgba(23, 27, 55, 0.06);
+  --sf-shadow-md: 0 4px 16px rgba(23, 27, 55, 0.08);
+  --sf-shadow-lg: 0 12px 32px rgba(23, 27, 55, 0.12);
+
+  --sf-header-h: 64px;
+  --sf-sidebar-w: 248px;
+  --sf-sidebar-w-collapsed: 76px;
+  --sf-bottom-nav-h: 64px;
+
+  --sf-transition: 150ms ease;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* Reserved for future dark theme; app currently ships a single
+       consistent light theme so booking/print screenshots stay predictable. */
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

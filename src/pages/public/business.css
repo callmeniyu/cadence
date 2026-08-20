@@ -1,0 +1,30 @@
+.sf-biz-banner { padding: 2.5rem 0; color: #fff; }
+.sf-biz-name { font-size: var(--sf-fs-2xl); color: #fff; margin-bottom: var(--sf-space-2); }
+.sf-svc-row .sf-card-body { padding: var(--sf-space-4) var(--sf-space-5); }
+
+/* Booking wizard */
+.sf-wizard-steps { display: flex; gap: 4px; margin-bottom: var(--sf-space-5); }
+.sf-wizard-step { flex: 1; height: 4px; border-radius: 2px; background: var(--sf-gray-200); }
+.sf-wizard-step-done { background: var(--sf-brand-500); }
+.sf-slot-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); gap: var(--sf-space-2); }
+.sf-slot-btn {
+  padding: 0.6rem 0.4rem; border-radius: var(--sf-radius-md); border: 1px solid var(--sf-border);
+  background: var(--sf-gray-0); cursor: pointer; font-size: var(--sf-fs-sm); font-weight: 600; text-align: center;
+  transition: all var(--sf-transition);
+}
+.sf-slot-btn:hover { border-color: var(--sf-brand-400); }
+.sf-slot-btn-selected { background: var(--sf-brand-500); color: #fff; border-color: var(--sf-brand-500); }
+.sf-staff-pick { display: flex; flex-direction: column; gap: var(--sf-space-2); }
+.sf-staff-option {
+  display: flex; align-items: center; gap: var(--sf-space-3); padding: var(--sf-space-3);
+  border: 1px solid var(--sf-border); border-radius: var(--sf-radius-md); cursor: pointer; background: var(--sf-gray-0);
+}
+.sf-staff-option-selected { border-color: var(--sf-brand-500); background: var(--sf-brand-50); }
+.sf-date-strip { display: flex; gap: var(--sf-space-2); overflow-x: auto; padding-bottom: var(--sf-space-2); }
+.sf-date-chip {
+  flex-shrink: 0; display: flex; flex-direction: column; align-items: center; gap: 2px;
+  padding: 0.6rem 0.9rem; border-radius: var(--sf-radius-md); border: 1px solid var(--sf-border);
+  background: var(--sf-gray-0); cursor: pointer; font-size: var(--sf-fs-xs); font-weight: 700;
+}
+.sf-date-chip-selected { background: var(--sf-brand-500); color: #fff; border-color: var(--sf-brand-500); }
+.sf-booking-summary { background: var(--sf-gray-50); border-radius: var(--sf-radius-md); padding: var(--sf-space-4); }
