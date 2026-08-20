@@ -10,6 +10,15 @@ Built with **React 19 + Vite**, **React Router**, **TanStack Query**,
 **react-hook-form + zod**, **recharts**, and **Supabase** (Postgres, Auth,
 Row Level Security, Edge Functions) as the backend.
 
+## Live Demo
+
+**[Open ServiceFlow Live →](https://heno26.github.io/serviceflow-business-platform/)**
+
+> The hosted portfolio version runs in **Demo Mode** using seeded local data and browser `localStorage`.  
+> The Supabase schema, RLS policies, RPCs, and Edge Function are included in the repository, but the live Supabase backend has not yet been connected and verified against a production project.
+
+**GitHub Repository:**  
+https://github.com/heno26/serviceflow-business-platform
 ---
 
 ## Status at a glance
@@ -27,7 +36,72 @@ Row Level Security, Edge Functions) as the backend.
   checkpoint" section of [`PROJECT_PROGRESS.md`](./PROJECT_PROGRESS.md) for
   exactly what remains to be verified and how to do it.
 
----
+## Features
+Open the printed local URL.
+
+If Supabase credentials are not configured, ServiceFlow automatically falls
+back to **Demo Mode**. The demo provider uses an in-browser,
+`localStorage`-persisted database seeded with the fictional business
+**Nova Wellness Studio**.
+
+You can also explicitly enable demo mode by creating a local environment file
+based on `.env.example` and setting:
+
+```env
+VITE_DEMO_MODE=true
+### Public Booking Experience
+
+- Public business and services pages
+- Multi-step appointment booking wizard
+- Service and staff selection
+- Dynamic availability and time-slot generation
+- Booking confirmation and lookup
+- Guest booking support
+- Responsive mobile-first experience
+
+### Business Management
+
+- Role-based dashboard
+- Day/week calendar
+- Appointment management
+- Customer management
+- Service management
+- Staff management
+- Staff availability and blocked-time scheduling
+- Invoice creation and management
+- Simulated payments
+- Notifications
+- Business reports and analytics
+- Business and booking settings
+
+### Customer Portal
+
+- View upcoming and past bookings
+- View booking details
+- View invoices
+- Manage basic customer profile
+
+### Security & Backend Architecture
+
+- Supabase Authentication architecture
+- PostgreSQL database schema
+- Row Level Security policies
+- Multi-business data isolation
+- Owner / Admin / Staff / Customer authorization model
+- Database-level double-booking protection
+- Server-authoritative invoice and payment logic
+- Public booking Edge Function
+- Safe frontend/backend environment-variable separation
+
+### Developer Experience
+
+- TanStack Query for server-state management
+- React Hook Form + Zod validation
+- Recharts analytics
+- Route-level lazy loading
+- Responsive design system
+- Demo/live provider abstraction
+- Automated Vitest coverage
 
 ## Quick start (demo mode — no backend required)
 
