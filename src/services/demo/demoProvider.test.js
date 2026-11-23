@@ -5,12 +5,6 @@ import {
   invoicesApi, paymentsApi, customersApi,
 } from './demoProvider';
 
-// These tests exercise the actual code path used by the running app in
-// demo mode (VITE_DEMO_MODE=true) — the only mode verified in this
-// environment. They intentionally mirror the invariants the real Postgres
-// schema/RPCs enforce (see supabase/migrations/*.sql) so a regression here
-// is a strong signal the same regression would occur against Supabase.
-
 beforeEach(() => {
   localStorage.clear();
   resetDemoData();
@@ -63,9 +57,6 @@ describe('booking + double-booking protection', () => {
     const staffOptions = await staffApi.servicesForStaff(business.id, service.id);
     const staffMemberId = staffOptions[0].id;
 
-    // Pick a start time far enough in the future & guaranteed clear (03:00 is
-    // outside seeded working hours in the fixture business, so use a slot
-    // search first to guarantee validity).
     const future = new Date();
     future.setDate(future.getDate() + 20);
     future.setHours(11, 0, 0, 0);
@@ -78,7 +69,7 @@ describe('booking + double-booking protection', () => {
     });
 
     expect(result.appointment.status).toMatch(/pending|confirmed/);
-    expect(result.appointment.booking_code).toMatch(/^SF-/);
+    expect(result.appointment.booking_code).toMatch(/^CAD-/);
   });
 
   it('rejects a second booking that overlaps an existing one for the same staff member', async () => {
@@ -171,11 +162,12 @@ describe('invoicing math', () => {
       customer: { fullName: 'Transition Test', email: 'transition.test@example.test', phone: '+1 555 000 6666' },
       customerNote: '',
     });
-    // App-level guard lives in the UI (APPOINTMENT_TRANSITIONS); demo provider
-    // itself doesn't re-validate transitions server-side (unlike the real
-    // update_appointment_status() RPC) — this test documents that gap.
-    const updated = await appointmentsApi.updateStatus(appointment.id, 'completed');
-    expect(updated.status).toBe('completed');
+
+    // Directly trying to transition from confirmed/pending to completed should fail
+    await expect(appointmentsApi.updateStatus(appointment.id, 'completed')).rejects.toThrow(/invalid status transition/i);
+    // Proper transition succeeds
+    const updated = await appointmentsApi.updateStatus(appointment.id, 'confirmed');
+    expect(updated.status).toBe('confirmed');
   });
 });
 

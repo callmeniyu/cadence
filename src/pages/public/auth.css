@@ -1,7 +1,53 @@
-.sf-auth-wrap { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: var(--sf-space-5); background: var(--sf-gray-50); }
-.sf-auth-card { width: 100%; max-width: 420px; }
-.sf-auth-logo { display: flex; align-items: center; gap: 8px; justify-content: center; font-weight: 800; font-size: var(--sf-fs-lg); color: var(--sf-brand-700); margin-bottom: var(--sf-space-5); }
-.sf-auth-title { text-align: center; margin-bottom: var(--sf-space-1); }
-.sf-auth-sub { text-align: center; color: var(--sf-text-muted); margin-bottom: var(--sf-space-5); font-size: var(--sf-fs-sm); }
-.sf-auth-foot { text-align: center; margin-top: var(--sf-space-4); font-size: var(--sf-fs-sm); color: var(--sf-text-muted); }
-.sf-demo-hint { background: var(--sf-info-100); color: var(--sf-brand-700); border-radius: var(--sf-radius-md); padding: var(--sf-space-3); font-size: var(--sf-fs-xs); margin-bottom: var(--sf-space-4); }
+/* -------------------------------------------------------------
+   CADENCE AUTH SCREENS STYLING
+   ------------------------------------------------------------- */
+
+.sf-auth-wrap {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--sf-space-6) var(--sf-space-4);
+  background: radial-gradient(circle at 50% 20%, rgba(199, 243, 107, 0.08) 0%, rgba(244, 245, 241, 0.8) 70%), var(--cd-bg, #F4F5F1);
+}
+.sf-auth-card {
+  width: 100%;
+  max-width: 440px;
+}
+.sf-auth-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  justify-content: center;
+  margin-bottom: var(--sf-space-6);
+  text-decoration: none;
+}
+.sf-auth-title {
+  text-align: center;
+  margin-bottom: var(--sf-space-2);
+  font-size: var(--sf-fs-xl);
+  font-weight: 800;
+  letter-spacing: -0.025em;
+  color: var(--cd-primary-dark, #171B24);
+}
+.sf-auth-sub {
+  text-align: center;
+  color: var(--cd-secondary-text, #747B88);
+  margin-bottom: var(--sf-space-5);
+  font-size: var(--sf-fs-sm);
+}
+.sf-auth-foot {
+  text-align: center;
+  margin-top: var(--sf-space-5);
+  font-size: var(--sf-fs-sm);
+  color: var(--cd-secondary-text, #747B88);
+}
+.sf-demo-hint {
+  background: var(--cd-surface-subtle, #FAFBF9);
+  color: var(--cd-primary-dark, #171B24);
+  border: 1px solid var(--cd-border, #E5E8E1);
+  border-radius: var(--sf-radius-md);
+  padding: 0.85rem 1rem;
+  font-size: var(--sf-fs-xs);
+  margin-bottom: var(--sf-space-5);
+}

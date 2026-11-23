@@ -1,28 +1,34 @@
-import { isSupabaseConfigured } from '../lib/supabaseClient';
-import * as demo from './demo/demoProvider';
-import * as live from './supabase/supabaseProvider';
+// -----------------------------------------------------------------------
+// CADENCE SERVICES
+//
+// Single, centralized client-side service layer for Cadence.
+// All feature hooks and pages consume this uniform contract backed
+// entirely by persistent browser localStorage. No backend or API required.
+// -----------------------------------------------------------------------
 
-// Single switch point (spec section 82): VITE_DEMO_MODE explicitly opts
-// into the local demo provider. If it's unset/false but Supabase isn't
-// configured either, we still fall back to demo so the app remains usable
-// during setup rather than hard-crashing.
-export const DEMO_MODE = import.meta.env.VITE_DEMO_MODE === 'true' || !isSupabaseConfigured;
+import * as local from './local/localProvider';
+import * as store from './local/localStore';
 
-const provider = DEMO_MODE ? demo : live;
+export const DEMO_MODE = true;
 
-export const auth = provider.auth;
-export const profileApi = provider.profileApi;
-export const businessApi = provider.businessApi;
-export const servicesApi = provider.servicesApi;
-export const staffApi = provider.staffApi;
-export const customersApi = provider.customersApi;
-export const availabilityApi = provider.availabilityApi;
-export const bookingApi = provider.bookingApi;
-export const appointmentsApi = provider.appointmentsApi;
-export const invoicesApi = provider.invoicesApi;
-export const paymentsApi = provider.paymentsApi;
-export const notificationsApi = provider.notificationsApi;
-export const reportsApi = provider.reportsApi;
-export const portalApi = provider.portalApi;
+export const auth = local.auth;
+export const profileApi = local.profileApi;
+export const businessApi = local.businessApi;
+export const servicesApi = local.servicesApi;
+export const staffApi = local.staffApi;
+export const customersApi = local.customersApi;
+export const availabilityApi = local.availabilityApi;
+export const bookingApi = local.bookingApi;
+export const appointmentsApi = local.appointmentsApi;
+export const invoicesApi = local.invoicesApi;
+export const paymentsApi = local.paymentsApi;
+export const notificationsApi = local.notificationsApi;
+export const reportsApi = local.reportsApi;
+export const portalApi = local.portalApi;
 
-export { resetDemoData } from './demo/demoStore';
+export const resetDemoData = store.resetDemoData;
+export const exportDatabaseAsJson = store.exportDatabaseAsJson;
+export const importDatabaseFromJson = store.importDatabaseFromJson;
+export const getLastRecoveryNotice = store.getLastRecoveryNotice;
+export const getPreference = store.getPreference;
+export const setPreference = store.setPreference;
