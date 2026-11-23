@@ -17,6 +17,7 @@ import {
   Building2,
   Plus,
   ExternalLink,
+  Check,
 } from 'lucide-react';
 import { useAuth } from '../../features/auth/AuthContext';
 import { useBusiness } from '../../features/business/BusinessContext';
@@ -65,7 +66,7 @@ const BOTTOM_NAV_ITEMS = [
 
 export function AppShell() {
   const { profile, signOut } = useAuth();
-  const { currentBusiness, role } = useBusiness();
+  const { currentBusiness, memberships, switchBusiness, role } = useBusiness();
   const navigate = useNavigate();
   const location = useLocation();
   const [menuOpen, setMenuOpen] = useState(false);
@@ -93,6 +94,8 @@ export function AppShell() {
     return 'Cadence Operations';
   })();
 
+  const isDemo = currentBusiness?.slug === 'nova-wellness-studio' || currentBusiness?.name?.toLowerCase().includes('demo');
+
   return (
     <div className="sf-app-shell">
       {/* Deep Ink Sidebar */}
@@ -109,7 +112,7 @@ export function AppShell() {
             aria-expanded={menuOpen}
           >
             <div className="sf-flex sf-items-center sf-gap-2" style={{ overflow: 'hidden' }}>
-              <Building2 size={13} style={{ color: 'var(--cd-accent-lime)' }} />
+              <Building2 size={13} style={{ color: isDemo ? 'var(--cd-accent-lime)' : 'var(--cd-secondary-accent)' }} />
               <span style={{ fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                 {currentBusiness?.name || 'Workspace'}
               </span>
@@ -121,11 +124,11 @@ export function AppShell() {
                 fontWeight: 700,
                 padding: '1px 6px',
                 borderRadius: 4,
-                background: 'rgba(255,255,255,0.1)',
-                color: 'var(--cd-accent-lime)',
+                background: isDemo ? 'rgba(199,243,107,0.15)' : 'rgba(119,117,232,0.2)',
+                color: isDemo ? 'var(--cd-accent-lime)' : '#C4C2FF',
               }}
             >
-              {role || 'staff'}
+              {isDemo ? 'Demo Studio' : 'Own Data'}
             </span>
           </div>
         </div>
@@ -205,10 +208,23 @@ export function AppShell() {
               {currentTitle}
             </span>
             <span style={{ color: 'var(--cd-border)', fontSize: '0.9rem' }}>/</span>
-            <span className="sf-text-xs sf-muted sf-flex sf-items-center sf-gap-1">
-              <span style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--cd-accent-lime)', display: 'inline-block' }} />
-              {currentBusiness?.name}
-            </span>
+            <div className="sf-text-xs sf-muted sf-flex sf-items-center sf-gap-1">
+              <span style={{ width: 7, height: 7, borderRadius: '50%', background: isDemo ? 'var(--cd-accent-lime)' : 'var(--cd-secondary-accent)', display: 'inline-block' }} />
+              <strong style={{ color: 'var(--cd-primary-dark)' }}>{currentBusiness?.name}</strong>
+              <span
+                style={{
+                  fontSize: 10,
+                  fontWeight: 700,
+                  padding: '1px 6px',
+                  borderRadius: 4,
+                  background: isDemo ? 'rgba(199,243,107,0.22)' : 'rgba(119,117,232,0.15)',
+                  color: isDemo ? 'var(--cd-primary-dark)' : 'var(--cd-secondary-accent)',
+                  marginLeft: 4,
+                }}
+              >
+                {isDemo ? 'Demo Studio (Mock Data)' : 'Your Own Data (Live)'}
+              </span>
+            </div>
           </div>
 
           <div className="sf-flex sf-items-center sf-gap-3">
@@ -252,27 +268,83 @@ export function AppShell() {
               <button
                 className="sf-flex sf-items-center sf-gap-2"
                 style={{
-                  background: 'var(--cd-surface-subtle)',
+                  background: 'var(--cd-surface)',
                   border: '1px solid var(--cd-border)',
                   cursor: 'pointer',
                   padding: '0.35rem 0.65rem',
                   borderRadius: 'var(--sf-radius-md)',
+                  boxShadow: 'var(--sf-shadow-sm)',
                 }}
                 onClick={() => setMenuOpen((v) => !v)}
                 aria-expanded={menuOpen}
               >
-                <div className="sf-avatar sf-avatar-lime" style={{ width: 24, height: 24, fontSize: 10 }}>
+                <div className={`sf-avatar ${isDemo ? 'sf-avatar-lime' : ''}`} style={{ width: 24, height: 24, fontSize: 10, background: !isDemo ? 'var(--cd-secondary-accent)' : undefined, color: !isDemo ? '#FFFFFF' : undefined }}>
                   {initials(currentBusiness?.name || 'W')}
                 </div>
+                <span className="sf-text-xs" style={{ fontWeight: 600, color: 'var(--cd-primary-dark)' }}>
+                  Switch Workspace
+                </span>
                 <ChevronDown size={14} color="var(--cd-secondary-text)" />
               </button>
 
               {menuOpen && (
-                <div className="sf-dropdown-menu" onMouseLeave={() => setMenuOpen(false)}>
-                  <div style={{ padding: '0.4rem 0.75rem 0.25rem', fontSize: '0.6875rem', fontWeight: 700, textTransform: 'uppercase', color: 'var(--cd-secondary-text)' }}>
-                    Active Workspace
+                <div className="sf-dropdown-menu" style={{ minWidth: 280 }} onMouseLeave={() => setMenuOpen(false)}>
+                  <div style={{ padding: '0.4rem 0.75rem 0.25rem', fontSize: '0.6875rem', fontWeight: 700, textTransform: 'uppercase', color: 'var(--cd-secondary-text)', letterSpacing: '0.05em' }}>
+                    Choose Environment & Data Mode
                   </div>
+
+                  {memberships.map((m) => {
+                    const isCurrent = m.business.id === currentBusiness?.id;
+                    const itemIsDemo = m.business.slug === 'nova-wellness-studio' || m.business.name.toLowerCase().includes('demo');
+                    return (
+                      <button
+                        key={m.business.id}
+                        type="button"
+                        className="sf-dropdown-item"
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'space-between',
+                          background: isCurrent ? 'var(--cd-surface-subtle, #FAFBF9)' : 'transparent',
+                          borderLeft: isCurrent ? '3px solid var(--cd-accent-lime, #C7F36B)' : '3px solid transparent',
+                          padding: '0.6rem 0.8rem',
+                          textAlign: 'left',
+                        }}
+                        onClick={() => {
+                          switchBusiness(m.business.id);
+                          setMenuOpen(false);
+                        }}
+                      >
+                        <div>
+                          <div className="sf-flex sf-items-center sf-gap-2">
+                            <span style={{ fontWeight: isCurrent ? 700 : 600, color: 'var(--cd-primary-dark)', fontSize: '0.8125rem' }}>
+                              {m.business.name}
+                            </span>
+                            <span
+                              style={{
+                                fontSize: '10px',
+                                padding: '1px 6px',
+                                borderRadius: 4,
+                                fontWeight: 700,
+                                background: itemIsDemo ? 'rgba(199, 243, 107, 0.25)' : 'rgba(119, 117, 232, 0.15)',
+                                color: itemIsDemo ? 'var(--cd-primary-dark)' : 'var(--cd-secondary-accent)',
+                              }}
+                            >
+                              {itemIsDemo ? 'Mock Data' : 'Own Data'}
+                            </span>
+                          </div>
+                          <div className="sf-text-xs sf-muted" style={{ fontSize: '11px', marginTop: 2 }}>
+                            {itemIsDemo ? 'Populated with sample appointments & revenue' : 'Clean slate — add your own records'}
+                          </div>
+                        </div>
+                        {isCurrent && <Check size={15} style={{ color: 'var(--cd-primary-dark)', flexShrink: 0 }} />}
+                      </button>
+                    );
+                  })}
+
+                  <div style={{ borderTop: '1px solid var(--cd-border)', margin: '6px 0' }} />
                   <button
+                    type="button"
                     className="sf-dropdown-item"
                     onClick={() => {
                       setMenuOpen(false);
@@ -282,16 +354,17 @@ export function AppShell() {
                     <Settings size={14} /> Workspace settings
                   </button>
                   <button
+                    type="button"
                     className="sf-dropdown-item"
                     onClick={() => {
                       setMenuOpen(false);
                       navigate('/onboarding');
                     }}
                   >
-                    <Plus size={14} /> Create another workspace
+                    <Plus size={14} /> Create custom workspace
                   </button>
-                  <div style={{ borderTop: '1px solid var(--cd-border)', margin: '4px 0' }} />
-                  <button className="sf-dropdown-item" onClick={handleSignOut}>
+                  <div style={{ borderTop: '1px solid var(--cd-border)', margin: '6px 0' }} />
+                  <button type="button" className="sf-dropdown-item" onClick={handleSignOut} style={{ color: 'var(--cd-danger)' }}>
                     <LogOut size={14} /> Sign out
                   </button>
                 </div>

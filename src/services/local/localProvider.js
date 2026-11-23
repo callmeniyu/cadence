@@ -392,14 +392,17 @@ export const availabilityApi = {
 
       const slots = generateSlots({
         date,
-        workingWindows: windows,
+        workingWindows: windows.map((w) => ({
+          startTime: w.startTime || w.start_time,
+          endTime: w.endTime || w.end_time,
+        })),
         blockedRanges: blocked,
         existingAppointments: existing,
         durationMinutes: service.duration_minutes,
-        bufferBeforeMinutes: service.buffer_before_minutes,
-        bufferAfterMinutes: service.buffer_after_minutes,
-        slotIntervalMinutes: business.slot_interval_minutes,
-        leadTimeMinutes: business.booking_lead_time_minutes,
+        bufferBeforeMinutes: service.buffer_before_minutes || 0,
+        bufferAfterMinutes: service.buffer_after_minutes || 0,
+        slotIntervalMinutes: business.slot_interval_minutes || 30,
+        leadTimeMinutes: business.booking_lead_time_minutes || 0,
       });
       slots.forEach((s) => allSlots.push({ ...s, staffMemberId: memberId }));
     }

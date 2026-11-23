@@ -3,10 +3,44 @@
    ------------------------------------------------------------- */
 
 .sf-biz-banner {
-  padding: 3rem 0;
+  padding-block: 3.5rem;
   background: var(--cd-primary-dark, #171B24);
   color: #FFFFFF;
   border-bottom: 1px solid var(--cd-dark-border, #2E3646);
+}
+.sf-biz-container {
+  width: 100%;
+  max-width: 1140px;
+  margin-inline: auto;
+  padding-inline: 1.5rem;
+}
+@media (min-width: 768px) {
+  .sf-biz-container {
+    padding-inline: 2.5rem;
+  }
+}
+@media (min-width: 1200px) {
+  .sf-biz-container {
+    padding-inline: 3rem;
+  }
+}
+.sf-biz-content-wrap {
+  width: 100%;
+  max-width: 1140px;
+  margin-inline: auto;
+  padding-inline: 1.5rem;
+  padding-top: 3rem;
+  padding-bottom: 5.5rem;
+}
+@media (min-width: 768px) {
+  .sf-biz-content-wrap {
+    padding-inline: 2.5rem;
+  }
+}
+@media (min-width: 1200px) {
+  .sf-biz-content-wrap {
+    padding-inline: 3rem;
+  }
 }
 .sf-biz-name {
   font-size: var(--sf-fs-3xl);
@@ -14,6 +48,14 @@
   letter-spacing: -0.03em;
   color: #FFFFFF;
   margin-bottom: var(--sf-space-2);
+}
+.sf-svc-row {
+  margin-bottom: 1.25rem;
+  transition: all var(--sf-transition);
+}
+.sf-svc-row:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--sf-shadow-md);
 }
 .sf-svc-row .sf-card-body {
   padding: var(--sf-space-4) var(--sf-space-5);

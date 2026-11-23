@@ -279,7 +279,7 @@ export function seedDatabase(d) {
     brand_color: '#171B24',
     logo_url: null,
     active: true,
-    booking_lead_time_minutes: 60,
+    booking_lead_time_minutes: 0,
     cancellation_window_hours: 12,
     slot_interval_minutes: 30,
     requires_approval: false,
@@ -327,10 +327,10 @@ export function seedDatabase(d) {
     }
   }
 
-  // Availability: Sun-Thu 09:00-17:00 for both staff (regional business week: weekdays 0, 1, 2, 3, 4)
-  for (const weekday of [0, 1, 2, 3, 4]) {
-    d.availability_rules.push({ id: uid('avail'), business_id: business.id, member_id: staffMember1.id, weekday, start_time: '09:00', end_time: '17:00', active: true });
-    d.availability_rules.push({ id: uid('avail'), business_id: business.id, member_id: staffMember2.id, weekday, start_time: '10:00', end_time: '18:00', active: true });
+  // Availability: All 7 days (weekdays 0, 1, 2, 3, 4, 5, 6) 09:00-18:00 for staff1 and 10:00-19:00 for staff2
+  for (const weekday of [0, 1, 2, 3, 4, 5, 6]) {
+    d.availability_rules.push({ id: uid('avail'), business_id: business.id, member_id: staffMember1.id, weekday, start_time: '09:00', end_time: '18:00', active: true });
+    d.availability_rules.push({ id: uid('avail'), business_id: business.id, member_id: staffMember2.id, weekday, start_time: '10:00', end_time: '19:00', active: true });
   }
 
   // Blocked time: staff2 on personal break tomorrow afternoon
@@ -639,6 +639,68 @@ export function seedDatabase(d) {
     read_at: null,
     created_at: subDays(now, 2).toISOString(),
   });
+
+  // -----------------------------------------------------------------------
+  // Workspace 2: "My Business (Your Own Data)" — Clean Slate
+  // Zero mock appointments, zero mock invoices, zero mock customers.
+  // The user can switch here from the Command Center and add their own data!
+  // -----------------------------------------------------------------------
+  const cleanBusiness = {
+    id: uid('biz'),
+    owner_user_id: ownerUser.id,
+    name: 'My Business (Your Own Data)',
+    slug: 'my-business',
+    business_type: 'consulting',
+    phone: '+1 555 019 2834',
+    email: ownerUser.email,
+    address: '100 Innovation Way, Suite 400',
+    timezone: 'UTC',
+    currency: 'USD',
+    brand_color: '#171B24',
+    logo_url: null,
+    active: true,
+    booking_lead_time_minutes: 0,
+    cancellation_window_hours: 12,
+    slot_interval_minutes: 30,
+    requires_approval: false,
+    customer_can_choose_staff: true,
+    tax_rate_percent: 0,
+    invoice_due_days: 7,
+    created_at: now.toISOString(),
+  };
+  d.businesses.push(cleanBusiness);
+
+  // Add owner and admin memberships for the clean business
+  const cleanOwnerMember = {
+    id: uid('mem'),
+    business_id: cleanBusiness.id,
+    user_id: ownerUser.id,
+    role: 'owner',
+    active: true,
+    created_at: now.toISOString(),
+  };
+  const cleanAdminMember = {
+    id: uid('mem'),
+    business_id: cleanBusiness.id,
+    user_id: adminUser.id,
+    role: 'admin',
+    active: true,
+    created_at: now.toISOString(),
+  };
+  d.business_members.push(cleanOwnerMember, cleanAdminMember);
+
+  // Set up owner availability for clean workspace across all 7 days
+  for (const weekday of [0, 1, 2, 3, 4, 5, 6]) {
+    d.availability_rules.push({
+      id: uid('avail'),
+      business_id: cleanBusiness.id,
+      member_id: cleanOwnerMember.id,
+      weekday,
+      start_time: '09:00',
+      end_time: '18:00',
+      active: true,
+    });
+  }
 }
 
 export { BLOCKING_APPOINTMENT_STATUSES };

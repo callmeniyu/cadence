@@ -19,6 +19,8 @@ import {
   CalendarDays,
   ExternalLink,
   Clock,
+  Scissors,
+  Sparkles,
 } from 'lucide-react';
 import { Card, CardHeader, CardBody } from '../../components/common/Card';
 import { Button } from '../../components/common/Button';
@@ -41,7 +43,7 @@ import NewAppointmentForm from './components/NewAppointmentForm';
 import './app-pages.css';
 
 export default function Dashboard() {
-  const { currentBusiness } = useBusiness();
+  const { currentBusiness, memberships, switchBusiness } = useBusiness();
   const { profile } = useAuth();
   const [showNewAppt, setShowNewAppt] = useState(false);
 
@@ -50,6 +52,11 @@ export default function Dashboard() {
   const { data: revenue, isLoading: revLoading } = useRevenueSeries(currentBusiness?.id, 14);
   const { data: statusBreakdown } = useStatusBreakdown(currentBusiness?.id);
   const { data: recentPayments } = usePayments(currentBusiness?.id, { pageSize: 4 });
+
+  const isDemo = currentBusiness?.slug === 'nova-wellness-studio' || currentBusiness?.name?.toLowerCase().includes('demo');
+  const otherWorkspace = memberships.find((m) => m.business.id !== currentBusiness?.id)?.business;
+  const hasRevenue = (revenue || []).some((r) => Number(r.revenue) > 0);
+  const isEmptyWorkspace = (kpis?.totalBookings ?? 0) === 0 && !hasRevenue;
 
   // Dynamic greeting based on current local hour
   const greeting = (() => {
@@ -115,6 +122,132 @@ export default function Dashboard() {
           )}
         </div>
       </div>
+
+      {/* Environment Mode Switcher Bar */}
+      <div
+        className="sf-flex sf-items-center sf-justify-between sf-p-3 sf-mb-6"
+        style={{
+          background: 'var(--cd-surface)',
+          border: '1px solid var(--cd-border)',
+          borderRadius: 'var(--sf-radius-md)',
+          boxShadow: 'var(--sf-shadow-sm)',
+          flexWrap: 'wrap',
+          gap: '0.75rem',
+        }}
+      >
+        <div className="sf-flex sf-items-center sf-gap-2">
+          <span
+            style={{
+              width: 8,
+              height: 8,
+              borderRadius: '50%',
+              background: isDemo ? 'var(--cd-accent-lime)' : 'var(--cd-secondary-accent)',
+              display: 'inline-block',
+            }}
+          />
+          <div>
+            <div className="sf-flex sf-items-center sf-gap-2">
+              <strong style={{ fontSize: 'var(--sf-fs-xs)', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--cd-primary-dark)' }}>
+                {isDemo ? 'Demo Studio Mode (Simulated Data)' : 'Custom Workspace (Your Own Data)'}
+              </strong>
+              <span
+                style={{
+                  fontSize: 10,
+                  padding: '1px 6px',
+                  borderRadius: 4,
+                  fontWeight: 700,
+                  background: isDemo ? 'rgba(199, 243, 107, 0.25)' : 'rgba(119, 117, 232, 0.15)',
+                  color: isDemo ? 'var(--cd-primary-dark)' : 'var(--cd-secondary-accent)',
+                }}
+              >
+                {isDemo ? 'Mock Data Active' : 'Clean Slate Active'}
+              </span>
+            </div>
+            <p className="sf-muted sf-text-xs sf-mt-1" style={{ margin: '2px 0 0' }}>
+              {isDemo
+                ? 'Dashboard KPIs, appointment rhythm, and 14-day revenue charts are pre-loaded with demonstration metrics.'
+                : 'This workspace is your clean operational slate. Add your own services, staff, and appointments from scratch.'}
+            </p>
+          </div>
+        </div>
+
+        {otherWorkspace && (
+          <Button
+            variant="secondary"
+            size="sm"
+            onClick={() => switchBusiness(otherWorkspace.id)}
+            style={{ fontSize: '0.75rem', fontWeight: 600 }}
+          >
+            {isDemo ? (
+              <>Switch to My Workspace (Your Own Data) &rarr;</>
+            ) : (
+              <>&larr; Switch to Demo Studio (Mock Data)</>
+            )}
+          </Button>
+        )}
+      </div>
+
+      {/* Clean Slate Quick-Start Banner (When Empty) */}
+      {isEmptyWorkspace && (
+        <Card padded className="sf-mb-6" style={{ background: 'var(--cd-surface)', border: '1.5px dashed var(--cd-border)' }}>
+          <div className="sf-flex sf-items-center sf-gap-2 sf-mb-2">
+            <Sparkles size={18} style={{ color: 'var(--cd-secondary-accent)' }} />
+            <h3 style={{ fontSize: 'var(--sf-fs-md)', fontWeight: 800, color: 'var(--cd-primary-dark)' }}>
+              Your Workspace is Ready — Add Your Own Data
+            </h3>
+          </div>
+          <p className="sf-muted sf-text-sm sf-mb-4" style={{ maxWidth: 640 }}>
+            You are viewing your clean workspace. Start tailoring your business by creating bookable offerings and team schedules.
+          </p>
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '0.75rem' }}>
+            <Link to="/app/services" className="cd-quick-action sf-flex-col sf-items-start" style={{ textDecoration: 'none', padding: '1rem' }}>
+              <div className="sf-flex sf-items-center sf-gap-2 sf-mb-1" style={{ color: 'var(--cd-primary-dark)', fontWeight: 700 }}>
+                <Scissors size={15} style={{ color: 'var(--cd-secondary-accent)' }} />
+                1. Add Services
+              </div>
+              <span className="sf-muted sf-text-xs">Create treatments, consultations, or classes</span>
+            </Link>
+
+            <Link to="/app/staff" className="cd-quick-action sf-flex-col sf-items-start" style={{ textDecoration: 'none', padding: '1rem' }}>
+              <div className="sf-flex sf-items-center sf-gap-2 sf-mb-1" style={{ color: 'var(--cd-primary-dark)', fontWeight: 700 }}>
+                <Users size={15} style={{ color: 'var(--cd-secondary-accent)' }} />
+                2. Set Working Hours
+              </div>
+              <span className="sf-muted sf-text-xs">Configure availability schedules & practitioner time</span>
+            </Link>
+
+            <button
+              type="button"
+              className="cd-quick-action sf-flex-col sf-items-start"
+              onClick={() => setShowNewAppt(true)}
+              style={{ cursor: 'pointer', textAlign: 'left', padding: '1rem', border: '1px solid var(--cd-border)' }}
+            >
+              <div className="sf-flex sf-items-center sf-gap-2 sf-mb-1" style={{ color: 'var(--cd-primary-dark)', fontWeight: 700 }}>
+                <Plus size={15} style={{ color: 'var(--cd-accent-lime)' }} />
+                3. Book an Appointment
+              </div>
+              <span className="sf-muted sf-text-xs">Record a walk-in or test scheduling</span>
+            </button>
+
+            {currentBusiness?.slug && (
+              <a
+                href={`/b/${currentBusiness.slug}`}
+                target="_blank"
+                rel="noreferrer"
+                className="cd-quick-action sf-flex-col sf-items-start"
+                style={{ textDecoration: 'none', padding: '1rem' }}
+              >
+                <div className="sf-flex sf-items-center sf-gap-2 sf-mb-1" style={{ color: 'var(--cd-primary-dark)', fontWeight: 700 }}>
+                  <ExternalLink size={15} style={{ color: 'var(--cd-accent-lime)' }} />
+                  4. Live Booking Page
+                </div>
+                <span className="sf-muted sf-text-xs">Preview what your clients will experience</span>
+              </a>
+            )}
+          </div>
+        </Card>
+      )}
 
       {/* KPI Metric Cards */}
       {kpiLoading ? (
@@ -261,6 +394,19 @@ export default function Dashboard() {
             <CardBody>
               {revLoading ? (
                 <SkeletonRows rows={1} height={200} />
+              ) : !hasRevenue ? (
+                <div className="sf-p-4 sf-text-center" style={{ padding: '2.5rem 1rem' }}>
+                  <DollarSign size={28} style={{ color: 'var(--cd-secondary-text)', margin: '0 auto 8px', opacity: 0.5 }} />
+                  <div style={{ fontWeight: 700, color: 'var(--cd-primary-dark)', fontSize: 'var(--sf-fs-sm)' }}>
+                    No recorded revenue yet
+                  </div>
+                  <p className="sf-muted sf-text-xs sf-mt-1" style={{ maxWidth: 340, margin: '4px auto 16px' }}>
+                    Once you complete appointments and record payments, your 14-day velocity will chart here in real time.
+                  </p>
+                  <Button size="sm" variant="secondary" onClick={() => setShowNewAppt(true)}>
+                    <Plus size={13} /> Book first appointment
+                  </Button>
+                </div>
               ) : (
                 <div style={{ height: 230, width: '100%' }}>
                   <ResponsiveContainer width="100%" height="100%">
@@ -366,16 +512,22 @@ export default function Dashboard() {
               Appointment Rhythm
             </h3>
             <div className="sf-flex-col sf-gap-2">
-              {statusBreakdown?.map((item) => (
-                <div key={item.status} className="sf-flex sf-justify-between sf-items-center sf-text-sm">
-                  <span className="sf-flex sf-items-center sf-gap-2" style={{ textTransform: 'capitalize' }}>
-                    <StatusBadge status={item.status} meta={APPOINTMENT_STATUS_META} />
-                  </span>
-                  <strong className="cd-num" style={{ color: 'var(--cd-primary-dark)' }}>
-                    {item.count}
-                  </strong>
-                </div>
-              ))}
+              {!statusBreakdown?.length ? (
+                <p className="sf-muted sf-text-xs sf-p-2" style={{ textAlign: 'center' }}>
+                  No appointment status records yet.
+                </p>
+              ) : (
+                statusBreakdown.map((item) => (
+                  <div key={item.status} className="sf-flex sf-justify-between sf-items-center sf-text-sm">
+                    <span className="sf-flex sf-items-center sf-gap-2" style={{ textTransform: 'capitalize' }}>
+                      <StatusBadge status={item.status} meta={APPOINTMENT_STATUS_META} />
+                    </span>
+                    <strong className="cd-num" style={{ color: 'var(--cd-primary-dark)' }}>
+                      {item.count}
+                    </strong>
+                  </div>
+                ))
+              )}
             </div>
 
             <div style={{ marginTop: '1.25rem', paddingTop: '1rem', borderTop: '1px solid var(--cd-border)' }}>

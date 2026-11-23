@@ -10,7 +10,7 @@ import {
   setPreference,
   getPreference,
 } from './localStore';
-import { appointmentsApi, bookingApi, servicesApi, staffApi, businessApi } from './localProvider';
+import { appointmentsApi, bookingApi, servicesApi, staffApi, businessApi, availabilityApi } from './localProvider';
 
 beforeEach(() => {
   localStorage.clear();
@@ -117,5 +117,26 @@ describe('localStore architecture & data reliability', () => {
       customerNote: '',
     });
     expect(rebooked.appointment.status).toMatch(/pending|confirmed/);
+  });
+
+  it('generates bookable slots for every service across all dates', async () => {
+    const business = await businessApi.getBusinessBySlug('nova-wellness-studio');
+    const services = await servicesApi.list(business.id, { publicOnly: true });
+    expect(services.length).toBeGreaterThan(0);
+
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+
+    for (const service of services) {
+      const slots = await availabilityApi.getSlots({
+        businessId: business.id,
+        serviceId: service.id,
+        date: tomorrow,
+      });
+      expect(slots.length).toBeGreaterThan(0);
+      expect(slots[0].start).toBeInstanceOf(Date);
+      expect(slots[0].end).toBeInstanceOf(Date);
+      expect(slots[0].staffMemberId).toBeDefined();
+    }
   });
 });

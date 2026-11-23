@@ -23,7 +23,7 @@ export default function BusinessPublicPage() {
     return (
       <div className="sf-flex-col" style={{ minHeight: '100vh', background: 'var(--cd-bg)' }}>
         <PublicHeader />
-        <div className="sf-container" style={{ padding: '3rem 0' }}>
+        <div className="sf-biz-container" style={{ paddingBlock: '3.5rem' }}>
           <SkeletonRows rows={4} height={90} />
         </div>
       </div>
@@ -34,7 +34,7 @@ export default function BusinessPublicPage() {
     return (
       <div className="sf-flex-col" style={{ minHeight: '100vh', background: 'var(--cd-bg)' }}>
         <PublicHeader />
-        <div className="sf-container" style={{ padding: '5rem 0' }}>
+        <div className="sf-biz-container" style={{ paddingBlock: '5rem' }}>
           <EmptyState
             title="Business not found"
             description="This Cadence booking page doesn't exist or is currently inactive."
@@ -63,7 +63,14 @@ export default function BusinessPublicPage() {
       <main style={{ flex: 1 }}>
         {/* Business Branding Banner */}
         <div className="sf-biz-banner">
-          <div className="sf-container">
+          <div className="sf-biz-container">
+            <Link
+              to="/"
+              className="sf-text-xs sf-flex sf-items-center sf-gap-1 sf-mb-3"
+              style={{ color: 'rgba(255, 255, 255, 0.7)', textDecoration: 'none', fontWeight: 600 }}
+            >
+              &larr; Back to Cadence
+            </Link>
             <div className="sf-flex sf-items-center sf-gap-2 sf-mb-2">
               <span
                 style={{
@@ -102,7 +109,7 @@ export default function BusinessPublicPage() {
         </div>
 
         {/* Services Showcase */}
-        <div className="sf-container" style={{ padding: '3rem 0 5rem' }}>
+        <div className="sf-biz-content-wrap">
           <div className="sf-flex sf-justify-between sf-items-center sf-mb-4" style={{ flexWrap: 'wrap', gap: '1rem' }}>
             <div>
               <h2 style={{ fontSize: 'var(--sf-fs-xl)', fontWeight: 800, color: 'var(--cd-primary-dark)' }}>
