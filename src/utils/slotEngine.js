@@ -35,8 +35,14 @@ export function generateSlots({
   const totalNeeded = durationMinutes + bufferBeforeMinutes + bufferAfterMinutes;
 
   for (const window of workingWindows) {
-    const [startH, startM] = window.startTime.split(':').map(Number);
-    const [endH, endM] = window.endTime.split(':').map(Number);
+    const startStr = window.startTime || window.start_time;
+    const endStr = window.endTime || window.end_time;
+    if (!startStr || !endStr) continue;
+
+    const [startH, startM] = startStr.split(':').map(Number);
+    const [endH, endM] = endStr.split(':').map(Number);
+    if (isNaN(startH) || isNaN(startM) || isNaN(endH) || isNaN(endM)) continue;
+
     let cursor = setMinutes(setHours(startOfDay(date), startH), startM);
     const windowEnd = setMinutes(setHours(startOfDay(date), endH), endM);
 

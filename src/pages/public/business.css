@@ -1,30 +1,182 @@
-.sf-biz-banner { padding: 2.5rem 0; color: #fff; }
-.sf-biz-name { font-size: var(--sf-fs-2xl); color: #fff; margin-bottom: var(--sf-space-2); }
-.sf-svc-row .sf-card-body { padding: var(--sf-space-4) var(--sf-space-5); }
+/* -------------------------------------------------------------
+   CADENCE PUBLIC BUSINESS & BOOKING WIZARD STYLES
+   ------------------------------------------------------------- */
 
-/* Booking wizard */
-.sf-wizard-steps { display: flex; gap: 4px; margin-bottom: var(--sf-space-5); }
-.sf-wizard-step { flex: 1; height: 4px; border-radius: 2px; background: var(--sf-gray-200); }
-.sf-wizard-step-done { background: var(--sf-brand-500); }
-.sf-slot-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); gap: var(--sf-space-2); }
-.sf-slot-btn {
-  padding: 0.6rem 0.4rem; border-radius: var(--sf-radius-md); border: 1px solid var(--sf-border);
-  background: var(--sf-gray-0); cursor: pointer; font-size: var(--sf-fs-sm); font-weight: 600; text-align: center;
+.sf-biz-banner {
+  padding-block: 3.5rem;
+  background: var(--cd-primary-dark, #171B24);
+  color: #FFFFFF;
+  border-bottom: 1px solid var(--cd-dark-border, #2E3646);
+}
+.sf-biz-container {
+  width: 100%;
+  max-width: 1140px;
+  margin-inline: auto;
+  padding-inline: 1.5rem;
+}
+@media (min-width: 768px) {
+  .sf-biz-container {
+    padding-inline: 2.5rem;
+  }
+}
+@media (min-width: 1200px) {
+  .sf-biz-container {
+    padding-inline: 3rem;
+  }
+}
+.sf-biz-content-wrap {
+  width: 100%;
+  max-width: 1140px;
+  margin-inline: auto;
+  padding-inline: 1.5rem;
+  padding-top: 3rem;
+  padding-bottom: 5.5rem;
+}
+@media (min-width: 768px) {
+  .sf-biz-content-wrap {
+    padding-inline: 2.5rem;
+  }
+}
+@media (min-width: 1200px) {
+  .sf-biz-content-wrap {
+    padding-inline: 3rem;
+  }
+}
+.sf-biz-name {
+  font-size: var(--sf-fs-3xl);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  color: #FFFFFF;
+  margin-bottom: var(--sf-space-2);
+}
+.sf-svc-row {
+  margin-bottom: 1.25rem;
   transition: all var(--sf-transition);
 }
-.sf-slot-btn:hover { border-color: var(--sf-brand-400); }
-.sf-slot-btn-selected { background: var(--sf-brand-500); color: #fff; border-color: var(--sf-brand-500); }
-.sf-staff-pick { display: flex; flex-direction: column; gap: var(--sf-space-2); }
+.sf-svc-row:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--sf-shadow-md);
+}
+.sf-svc-row .sf-card-body {
+  padding: var(--sf-space-4) var(--sf-space-5);
+}
+
+/* Booking wizard steps */
+.sf-wizard-steps {
+  display: flex;
+  gap: 6px;
+  margin-bottom: var(--sf-space-5);
+}
+.sf-wizard-step {
+  flex: 1;
+  height: 5px;
+  border-radius: 3px;
+  background: var(--cd-border, #E5E8E1);
+  transition: all var(--sf-transition);
+}
+.sf-wizard-step-done {
+  background: var(--cd-primary-dark, #171B24);
+}
+.sf-wizard-step-current {
+  background: var(--cd-accent-lime, #C7F36B);
+}
+
+/* Time slot buttons */
+.sf-slot-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(96px, 1fr));
+  gap: 8px;
+}
+.sf-slot-btn {
+  padding: 0.7rem 0.5rem;
+  border-radius: var(--sf-radius-md);
+  border: 1px solid var(--cd-border, #E5E8E1);
+  background: var(--cd-surface, #FFFFFF);
+  color: var(--cd-primary-text, #202531);
+  cursor: pointer;
+  font-size: var(--sf-fs-sm);
+  font-weight: 600;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+  transition: all var(--sf-transition);
+}
+.sf-slot-btn:hover {
+  border-color: var(--cd-primary-dark, #171B24);
+  background: var(--cd-surface-subtle, #FAFBF9);
+}
+.sf-slot-btn-selected {
+  background: var(--cd-primary-dark, #171B24) !important;
+  color: #FFFFFF !important;
+  border-color: var(--cd-primary-dark, #171B24) !important;
+  box-shadow: 0 2px 6px rgba(23, 27, 36, 0.2);
+}
+
+/* Staff selection */
+.sf-staff-pick {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sf-space-2);
+}
 .sf-staff-option {
-  display: flex; align-items: center; gap: var(--sf-space-3); padding: var(--sf-space-3);
-  border: 1px solid var(--sf-border); border-radius: var(--sf-radius-md); cursor: pointer; background: var(--sf-gray-0);
+  display: flex;
+  align-items: center;
+  gap: var(--sf-space-3);
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--cd-border, #E5E8E1);
+  border-radius: var(--sf-radius-md);
+  cursor: pointer;
+  background: var(--cd-surface, #FFFFFF);
+  transition: all var(--sf-transition);
 }
-.sf-staff-option-selected { border-color: var(--sf-brand-500); background: var(--sf-brand-50); }
-.sf-date-strip { display: flex; gap: var(--sf-space-2); overflow-x: auto; padding-bottom: var(--sf-space-2); }
+.sf-staff-option:hover {
+  border-color: #D3D8CE;
+  background: var(--cd-surface-subtle, #FAFBF9);
+}
+.sf-staff-option-selected {
+  border-color: var(--cd-primary-dark, #171B24) !important;
+  background: var(--cd-surface-subtle, #FAFBF9) !important;
+  box-shadow: 0 0 0 2px var(--cd-primary-dark, #171B24);
+}
+
+/* Date picker strip */
+.sf-date-strip {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 8px;
+}
 .sf-date-chip {
-  flex-shrink: 0; display: flex; flex-direction: column; align-items: center; gap: 2px;
-  padding: 0.6rem 0.9rem; border-radius: var(--sf-radius-md); border: 1px solid var(--sf-border);
-  background: var(--sf-gray-0); cursor: pointer; font-size: var(--sf-fs-xs); font-weight: 700;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 0.7rem 1rem;
+  border-radius: var(--sf-radius-md);
+  border: 1px solid var(--cd-border, #E5E8E1);
+  background: var(--cd-surface, #FFFFFF);
+  color: var(--cd-primary-text, #202531);
+  cursor: pointer;
+  font-size: var(--sf-fs-xs);
+  font-weight: 700;
+  min-width: 62px;
+  font-variant-numeric: tabular-nums;
+  transition: all var(--sf-transition);
 }
-.sf-date-chip-selected { background: var(--sf-brand-500); color: #fff; border-color: var(--sf-brand-500); }
-.sf-booking-summary { background: var(--sf-gray-50); border-radius: var(--sf-radius-md); padding: var(--sf-space-4); }
+.sf-date-chip:hover {
+  border-color: var(--cd-primary-dark, #171B24);
+}
+.sf-date-chip-selected {
+  background: var(--cd-primary-dark, #171B24) !important;
+  color: #FFFFFF !important;
+  border-color: var(--cd-primary-dark, #171B24) !important;
+}
+
+/* Booking summary box */
+.sf-booking-summary {
+  background: var(--cd-surface-subtle, #FAFBF9);
+  border: 1px solid var(--cd-border, #E5E8E1);
+  border-radius: var(--sf-radius-md);
+  padding: var(--sf-space-4);
+  font-size: var(--sf-fs-sm);
+}

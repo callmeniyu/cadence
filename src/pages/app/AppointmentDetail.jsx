@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { ArrowLeft, User, Scissors, Clock, FileText } from 'lucide-react';
+import { ArrowLeft, User, Scissors, Clock, FileText, CalendarCheck } from 'lucide-react';
 import { Card, CardHeader, CardBody } from '../../components/common/Card';
 import { Button } from '../../components/common/Button';
 import { StatusBadge } from '../../components/common/Badge';
@@ -10,7 +10,13 @@ import { Field, Select, Textarea } from '../../components/common/FormField';
 import { useToast } from '../../components/common/Toast';
 import { useBusiness } from '../../features/business/BusinessContext';
 import { useAuth } from '../../features/auth/AuthContext';
-import { useAppointment, useAppointmentActivity, useUpdateAppointmentStatus, useUpdateAppointmentNotes, useReassignStaff } from '../../features/appointments/hooks';
+import {
+  useAppointment,
+  useAppointmentActivity,
+  useUpdateAppointmentStatus,
+  useUpdateAppointmentNotes,
+  useReassignStaff,
+} from '../../features/appointments/hooks';
 import { useStaffList } from '../../features/staff/hooks';
 import { useCreateInvoiceFromAppointment } from '../../features/invoices/hooks';
 import { APPOINTMENT_STATUS_META, APPOINTMENT_TRANSITIONS } from '../../constants/status';
@@ -38,14 +44,14 @@ export default function AppointmentDetail() {
   const [internalNote, setInternalNote] = useState('');
 
   if (isLoading) return <SkeletonRows rows={4} height={80} />;
-  if (!appt) return <p>Appointment not found.</p>;
+  if (!appt) return <p className="sf-muted">Appointment not found.</p>;
 
   const nextStatuses = APPOINTMENT_TRANSITIONS[appt.status] || [];
 
   async function changeStatus(status) {
     try {
       await updateStatus.mutateAsync({ id, status, actorUserId: user?.id });
-      toast.success('Status updated');
+      toast.success(`Status updated to ${status.replace('_', ' ')}`);
     } catch (err) {
       toast.error(toFriendlyError(err));
     }
@@ -58,8 +64,8 @@ export default function AppointmentDetail() {
 
   async function saveInternalNote() {
     try {
-      await updateNotes.mutateAsync({ id, patch: { internal_note: internalNote || appt.internal_note } });
-      toast.success('Note saved');
+      await updateNotes.mutateAsync({ id, patch: { internal_note: internalNote !== '' ? internalNote : appt.internal_note } });
+      toast.success('Internal note saved');
     } catch (err) {
       toast.error(toFriendlyError(err));
     }
@@ -67,10 +73,10 @@ export default function AppointmentDetail() {
 
   async function handleReassign(e) {
     const staffMemberId = e.target.value;
-    if (!staffMemberId) return;
+    if (!staffMemberId || staffMemberId === appt.staff_member_id) return;
     try {
       await reassignStaff.mutateAsync({ id, staffMemberId, actorUserId: user?.id });
-      toast.success('Staff reassigned');
+      toast.success('Staff practitioner reassigned');
     } catch (err) {
       toast.error(toFriendlyError(err));
     }
@@ -79,7 +85,7 @@ export default function AppointmentDetail() {
   async function handleCreateInvoice() {
     try {
       const inv = await createInvoice.mutateAsync(id);
-      toast.success('Invoice created');
+      toast.success('Invoice drafted successfully');
       navigate(`/app/invoices/${inv.id}`);
     } catch (err) {
       toast.error(toFriendlyError(err));
@@ -88,81 +94,219 @@ export default function AppointmentDetail() {
 
   return (
     <div>
-      <Link to="/app/appointments" className="sf-flex sf-items-center sf-gap-1 sf-text-sm sf-mb-4" style={{ color: 'var(--sf-brand-600)', fontWeight: 600 }}>
+      <Link
+        to="/app/appointments"
+        className="sf-flex sf-items-center sf-gap-1 sf-text-sm sf-mb-4"
+        style={{ color: 'var(--cd-primary-dark)', fontWeight: 600, textDecoration: 'none' }}
+      >
         <ArrowLeft size={14} /> Back to appointments
       </Link>
 
       <div className="sf-app-page-header">
         <div>
+          <div className="sf-flex sf-items-center sf-gap-2 sf-mb-1">
+            <span
+              style={{
+                fontFamily: 'var(--sf-font-mono)',
+                fontSize: '0.8125rem',
+                fontWeight: 700,
+                color: 'var(--cd-secondary-text)',
+              }}
+            >
+              {appt.booking_code}
+            </span>
+            <span className="sf-text-xs sf-muted">&middot;</span>
+            <span className="sf-text-xs sf-muted">Source: {appt.source?.replace('_', ' ') || 'public'}</span>
+          </div>
           <h1 className="sf-app-page-title">{appt.service?.name}</h1>
-          <p className="sf-muted">{appt.booking_code} &middot; {formatDateTime(appt.start_at)}</p>
+          <p className="sf-muted">{formatDateTime(appt.start_at)}</p>
         </div>
-        <StatusBadge status={appt.status} meta={APPOINTMENT_STATUS_META} />
+
+        <div className="sf-flex sf-items-center sf-gap-2">
+          <StatusBadge status={appt.status} meta={APPOINTMENT_STATUS_META} />
+          {canManage && !['completed', 'cancelled', 'no_show'].includes(appt.status) && (
+            <Button variant="danger" size="sm" onClick={() => setConfirmCancel(true)}>
+              Cancel appointment
+            </Button>
+          )}
+        </div>
       </div>
 
       <div className="sf-detail-grid">
-        <div className="sf-flex-col sf-gap-4">
+        <div className="sf-flex-col sf-gap-5">
+          {/* Appointment Information Card */}
           <Card>
-            <CardHeader title="Details" />
+            <CardHeader title="Appointment Overview" />
             <CardBody className="sf-flex-col sf-gap-3">
-              <div className="sf-flex sf-items-center sf-gap-2"><User size={16} color="var(--sf-brand-500)" /><Link to={`/app/customers/${appt.customer?.id}`} style={{ color: 'var(--sf-brand-600)', fontWeight: 700 }}>{appt.customer?.full_name}</Link></div>
-              <div className="sf-flex sf-items-center sf-gap-2"><Scissors size={16} color="var(--sf-brand-500)" />{appt.service?.name} &middot; {formatMoney(appt.service?.price, currentBusiness?.currency)}</div>
-              <div className="sf-flex sf-items-center sf-gap-2"><Clock size={16} color="var(--sf-brand-500)" />{formatDateTime(appt.start_at)} ({formatDuration(appt.service?.duration_minutes || 0)})</div>
+              <div className="sf-flex sf-items-center sf-gap-3">
+                <User size={16} color="var(--cd-primary-dark)" />
+                <div>
+                  <span className="sf-text-xs sf-muted">Client: </span>
+                  {appt.customer ? (
+                    <Link
+                      to={`/app/customers/${appt.customer.id}`}
+                      style={{ color: 'var(--cd-primary-dark)', fontWeight: 700 }}
+                    >
+                      {appt.customer.full_name}
+                    </Link>
+                  ) : (
+                    '—'
+                  )}
+                  {appt.customer?.phone && <span className="sf-text-xs sf-muted"> ({appt.customer.phone})</span>}
+                </div>
+              </div>
+
+              <div className="sf-flex sf-items-center sf-gap-3">
+                <Scissors size={16} color="var(--cd-primary-dark)" />
+                <div>
+                  <span className="sf-text-xs sf-muted">Service: </span>
+                  <strong>{appt.service?.name}</strong> &middot;{' '}
+                  <span className="cd-num">{formatMoney(appt.service?.price, currentBusiness?.currency)}</span>
+                </div>
+              </div>
+
+              <div className="sf-flex sf-items-center sf-gap-3">
+                <Clock size={16} color="var(--cd-primary-dark)" />
+                <div>
+                  <span className="sf-text-xs sf-muted">Time & Duration: </span>
+                  <span className="cd-num">{formatDateTime(appt.start_at)}</span> ({formatDuration(appt.service?.duration_minutes || 0)})
+                </div>
+              </div>
+
               {appt.customer_note && (
-                <div className="sf-flex sf-gap-2"><FileText size={16} color="var(--sf-brand-500)" /><span className="sf-text-sm">{appt.customer_note}</span></div>
+                <div
+                  className="sf-flex sf-gap-2 sf-mt-2"
+                  style={{
+                    background: 'var(--cd-surface-subtle)',
+                    padding: '0.75rem',
+                    borderRadius: 'var(--sf-radius-md)',
+                    border: '1px solid var(--cd-border)',
+                  }}
+                >
+                  <FileText size={16} color="var(--cd-secondary-text)" style={{ flexShrink: 0, marginTop: 2 }} />
+                  <div>
+                    <div style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--cd-secondary-text)' }}>Client Note</div>
+                    <div className="sf-text-sm">{appt.customer_note}</div>
+                  </div>
+                </div>
               )}
 
               {canManage && (
-                <Field label="Reassign staff" htmlFor="staff-reassign">
-                  <Select id="staff-reassign" defaultValue={appt.staff_member_id} onChange={handleReassign}>
-                    {staffList?.map((m) => <option key={m.id} value={m.id}>{m.profile?.full_name}</option>)}
-                  </Select>
-                </Field>
+                <div style={{ marginTop: '0.5rem', paddingTop: '1rem', borderTop: '1px solid var(--cd-border-subtle)' }}>
+                  <Field label="Reassign Staff Practitioner" htmlFor="staff-reassign">
+                    <Select id="staff-reassign" defaultValue={appt.staff_member_id} onChange={handleReassign}>
+                      {staffList?.map((m) => (
+                        <option key={m.id} value={m.id}>
+                          {m.profile?.full_name} ({m.role})
+                        </option>
+                      ))}
+                    </Select>
+                  </Field>
+                </div>
               )}
             </CardBody>
           </Card>
 
+          {/* Internal Notes Card */}
           <Card>
-            <CardHeader title="Internal notes" />
+            <CardHeader title="Internal Notes (Staff Only)" />
             <CardBody>
-              <Textarea rows={3} defaultValue={appt.internal_note} onChange={(e) => setInternalNote(e.target.value)} placeholder="Notes visible to staff only" />
-              <Button variant="secondary" size="sm" className="sf-mt-2" onClick={saveInternalNote} loading={updateNotes.isPending}>Save note</Button>
+              <Textarea
+                rows={3}
+                defaultValue={appt.internal_note}
+                onChange={(e) => setInternalNote(e.target.value)}
+                placeholder="Notes visible to staff members only..."
+              />
+              <Button
+                variant="secondary"
+                size="sm"
+                className="sf-mt-3"
+                onClick={saveInternalNote}
+                loading={updateNotes.isPending}
+              >
+                Save internal note
+              </Button>
             </CardBody>
           </Card>
 
+          {/* Activity Log */}
           <Card>
-            <CardHeader title="Activity" />
+            <CardHeader title="Activity Timeline" />
             <CardBody>
-              {!activity?.length ? <p className="sf-muted sf-text-sm">No activity yet.</p> : activity.map((ev) => (
-                <div key={ev.id} className="sf-timeline-item">
-                  <div className="sf-timeline-dot" />
-                  <div>
-                    <div className="sf-text-sm">{ev.message}</div>
-                    <div className="sf-text-xs sf-muted">{formatRelative(ev.created_at)}</div>
+              {!activity?.length ? (
+                <p className="sf-muted sf-text-sm">No activity recorded yet.</p>
+              ) : (
+                activity.map((ev) => (
+                  <div key={ev.id} className="sf-timeline-item">
+                    <div className="sf-timeline-dot" />
+                    <div style={{ flex: 1 }}>
+                      <div className="sf-text-sm" style={{ fontWeight: 600, color: 'var(--cd-primary-dark)' }}>
+                        {ev.message}
+                      </div>
+                      <div className="sf-text-xs sf-muted sf-mt-1 cd-num">
+                        {formatRelative(ev.created_at)}
+                      </div>
+                    </div>
                   </div>
-                </div>
-              ))}
+                ))
+              )}
             </CardBody>
           </Card>
         </div>
 
-        <div className="sf-flex-col sf-gap-4">
+        {/* Right Column: Workflow Actions & Invoice Creation */}
+        <div className="sf-flex-col sf-gap-5">
+          {/* Status Progression Card */}
           <Card padded>
-            <h3 className="sf-mb-3" style={{ fontSize: 'var(--sf-fs-md)' }}>Actions</h3>
-            <div className="sf-flex-col sf-gap-2">
-              {nextStatuses.filter((s) => s !== 'cancelled').map((s) => (
-                <Button key={s} variant="primary" onClick={() => changeStatus(s)} loading={updateStatus.isPending}>
-                  Mark as {APPOINTMENT_STATUS_META[s].label}
-                </Button>
-              ))}
-              {nextStatuses.includes('cancelled') && (
-                <Button variant="danger" onClick={() => setConfirmCancel(true)}>Cancel appointment</Button>
-              )}
-              {canManage && appt.status === 'completed' && (
-                <Button variant="secondary" onClick={handleCreateInvoice} loading={createInvoice.isPending}>Create invoice</Button>
-              )}
-              {!nextStatuses.length && <p className="sf-muted sf-text-sm">No further actions available.</p>}
-            </div>
+            <h3 className="sf-mb-3" style={{ fontSize: 'var(--sf-fs-md)', color: 'var(--cd-primary-dark)' }}>
+              Status Progression
+            </h3>
+
+            {nextStatuses.length === 0 ? (
+              <p className="sf-muted sf-text-sm">
+                This appointment is in terminal state <strong>{appt.status}</strong>.
+              </p>
+            ) : (
+              <div className="sf-flex-col sf-gap-2">
+                <span className="sf-text-xs sf-muted sf-mb-1">Advance workflow:</span>
+                {nextStatuses
+                  .filter((s) => s !== 'cancelled')
+                  .map((st) => (
+                    <Button
+                      key={st}
+                      variant="primary"
+                      onClick={() => changeStatus(st)}
+                      loading={updateStatus.isPending}
+                      style={{ justifyContent: 'space-between', textTransform: 'capitalize' }}
+                    >
+                      <span>Mark as {st.replace('_', ' ')}</span>
+                      <CalendarCheck size={14} />
+                    </Button>
+                  ))}
+              </div>
+            )}
+          </Card>
+
+          {/* Billing & Invoice CTA Card */}
+          <Card padded>
+            <h3 className="sf-mb-2" style={{ fontSize: 'var(--sf-fs-md)', color: 'var(--cd-primary-dark)' }}>
+              Billing & Invoicing
+            </h3>
+            <p className="sf-muted sf-text-xs sf-mb-4">
+              Payment status:{' '}
+              <strong style={{ textTransform: 'capitalize', color: 'var(--cd-primary-dark)' }}>
+                {appt.payment_status.replace('_', ' ')}
+              </strong>
+            </p>
+
+            <Button
+              variant="secondary"
+              block
+              onClick={handleCreateInvoice}
+              loading={createInvoice.isPending}
+            >
+              <FileText size={15} /> Create invoice from appointment
+            </Button>
           </Card>
         </div>
       </div>
@@ -172,7 +316,7 @@ export default function AppointmentDetail() {
         onClose={() => setConfirmCancel(false)}
         onConfirm={handleCancel}
         title="Cancel this appointment?"
-        description="The customer will be notified and this time slot will become available again."
+        description="Cancelling will immediately release the time slot for other clients to book."
         confirmLabel="Cancel appointment"
         loading={updateStatus.isPending}
       />

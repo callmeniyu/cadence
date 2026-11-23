@@ -56,18 +56,20 @@ export default function Staff() {
           {staff.map((m) => {
             const RoleIcon = ROLE_ICON[m.role] || User;
             return (
-              <Link key={m.id} to={`/app/staff/${m.id}`}>
+              <Link key={m.id} to={`/app/staff/${m.id}`} style={{ textDecoration: 'none' }}>
                 <Card>
                   <CardBody className="sf-flex sf-items-center sf-justify-between">
                     <div className="sf-flex sf-items-center sf-gap-3">
-                      <span className="sf-avatar">{initials(m.profile?.full_name || 'S')}</span>
+                      <span className="sf-avatar" style={{ background: 'var(--cd-primary-dark, #171B24)', color: 'var(--cd-accent-lime, #C7F36B)' }}>
+                        {initials(m.profile?.full_name || 'S')}
+                      </span>
                       <div>
-                        <div style={{ fontWeight: 700 }}>{m.profile?.full_name}</div>
+                        <div style={{ fontWeight: 700, color: 'var(--cd-primary-dark, #171B24)' }}>{m.profile?.full_name}</div>
                         <div className="sf-text-xs sf-muted">{m.services?.length || 0} services assigned</div>
                       </div>
                     </div>
                     <span className={`sf-badge sf-badge-${m.role === 'owner' ? 'accent' : m.role === 'admin' ? 'info' : 'neutral'}`}>
-                      <RoleIcon size={12} style={{ marginRight: 2 }} />{m.role}
+                      <RoleIcon size={12} style={{ marginRight: 4 }} />{m.role}
                     </span>
                   </CardBody>
                 </Card>

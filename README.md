@@ -1,255 +1,199 @@
-# ServiceFlow
+# Cadence — Run your business in rhythm.
 
-Appointment scheduling and lightweight business management for service
-businesses (clinics, salons, gyms, training centers, consultants, repair
-services). Customers book online without creating an account; staff manage
-their calendar, customers, invoices, and payments from a role-based admin
-dashboard; customers who do register get a self-service portal.
+A scheduling and operations management platform built for appointment-based businesses — including wellness clinics, salons, fitness studios, consulting practices, training centers, and service professionals.
 
-Built with **React 19 + Vite**, **React Router**, **TanStack Query**,
-**react-hook-form + zod**, **recharts**, and **Supabase** (Postgres, Auth,
-Row Level Security, Edge Functions) as the backend.
+Cadence combines client self-scheduling, operational calendar management, customer history tracking, invoice generation, simulated payment collection, and business analytics into a unified local-first web application.
 
-## Live Demo
-
-**[Open ServiceFlow Live →](https://heno26.github.io/serviceflow-business-platform/)**
-
-> The hosted portfolio version runs in **Demo Mode** using seeded local data and browser `localStorage`.  
-> The Supabase schema, RLS policies, RPCs, and Edge Function are included in the repository, but the live Supabase backend has not yet been connected and verified against a production project.
-
-**GitHub Repository:**  
-https://github.com/heno26/serviceflow-business-platform
 ---
 
-## Status at a glance
+## ⚡ Quick Start
 
-- ✅ Frontend: fully built — public site, booking flow, authenticated admin
-  app, customer portal. `npm run build` succeeds with 0 errors/warnings.
-- ✅ Demo mode: fully working and the only backend **actually tested** in
-  this environment (18 automated tests passing — see `npm test`).
-- ✅ Supabase backend: complete SQL migrations (schema, constraints, RLS
-  policies, functions/RPCs, seed template) and an Edge Function, written to
-  match the frontend's data provider contract exactly.
-- ⚠️ Supabase backend has **not been executed against a live project** in
-  this environment — no project credentials were available. See
-  [`SUPABASE_SETUP.md`](./SUPABASE_SETUP.md) and the "Supabase integration
-  checkpoint" section of [`PROJECT_PROGRESS.md`](./PROJECT_PROGRESS.md) for
-  exactly what remains to be verified and how to do it.
-
-## Features
-Open the printed local URL.
-
-If Supabase credentials are not configured, ServiceFlow automatically falls
-back to **Demo Mode**. The demo provider uses an in-browser,
-`localStorage`-persisted database seeded with the fictional business
-**Nova Wellness Studio**.
-
-You can also explicitly enable demo mode by creating a local environment file
-based on `.env.example` and setting:
-
-```env
-VITE_DEMO_MODE=true
-### Public Booking Experience
-
-- Public business and services pages
-- Multi-step appointment booking wizard
-- Service and staff selection
-- Dynamic availability and time-slot generation
-- Booking confirmation and lookup
-- Guest booking support
-- Responsive mobile-first experience
-
-### Business Management
-
-- Role-based dashboard
-- Day/week calendar
-- Appointment management
-- Customer management
-- Service management
-- Staff management
-- Staff availability and blocked-time scheduling
-- Invoice creation and management
-- Simulated payments
-- Notifications
-- Business reports and analytics
-- Business and booking settings
-
-### Customer Portal
-
-- View upcoming and past bookings
-- View booking details
-- View invoices
-- Manage basic customer profile
-
-### Security & Backend Architecture
-
-- Supabase Authentication architecture
-- PostgreSQL database schema
-- Row Level Security policies
-- Multi-business data isolation
-- Owner / Admin / Staff / Customer authorization model
-- Database-level double-booking protection
-- Server-authoritative invoice and payment logic
-- Public booking Edge Function
-- Safe frontend/backend environment-variable separation
-
-### Developer Experience
-
-- TanStack Query for server-state management
-- React Hook Form + Zod validation
-- Recharts analytics
-- Route-level lazy loading
-- Responsive design system
-- Demo/live provider abstraction
-- Automated Vitest coverage
-
-## Quick start (demo mode — no backend required)
+Cadence runs entirely in the browser using a high-reliability, schema-versioned `localStorage` database. **No backend servers, no cloud databases, and no API keys or configuration files are required.**
 
 ```bash
+# 1. Install dependencies
 npm install
+
+# 2. Start the local development server
 npm run dev
 ```
 
-Open the printed local URL. The app starts in demo mode (`VITE_DEMO_MODE=true`
-in `.env`), backed entirely by an in-browser, localStorage-persisted fake
-database seeded with a demo business, **Nova Wellness Studio**. Nothing
-leaves your browser.
+Open the printed local URL (typically `http://localhost:5173`) in your browser to start exploring immediately.
 
-### Demo accounts
+### Key Scripts
 
-All demo accounts use the password `demo1234`.
-
-| Role     | Email                          |
-|----------|---------------------------------|
-| Owner    | owner@novawellness.demo         |
-| Admin    | admin@novawellness.demo         |
-| Staff    | staff1@novawellness.demo        |
-| Staff    | staff2@novawellness.demo        |
-| Customer | customer@novawellness.demo      |
-
-The login page has one-click buttons to fill these in. You can also try the
-public booking flow without logging in at `/b/nova-wellness-studio`.
-
-To reset all demo data back to the original seed, clear your browser's
-localStorage for the app's origin (or call `resetDemoData()` exported from
-`src/services/demo/demoStore.js` in the console).
+| Command | Purpose |
+|---|---|
+| `npm run dev` | Starts Vite local development server with HMR |
+| `npm run build` | Builds optimized production bundle to `dist/` |
+| `npm run preview` | Previews the production build locally |
+| `npm test` | Runs all Vitest test suites (23/23 passing) |
+| `npm run lint` | Runs `oxlint` static code analysis |
 
 ---
 
-## Project structure
+## 🔑 Demo Accounts & One-Click Login
 
-```
-src/
-  app/            Router, route guards, providers, query client
-  components/
-    common/        Design-system primitives (Button, Card, Modal, Toast, ...)
-    layout/         Public header/footer, authenticated app shell, portal shell
-  constants/       Status enums, transitions, roles — single source of truth
-  features/        One folder per domain (auth, business, booking, staff, ...),
-                    each exposing React Query hooks over the service layer
-  lib/             supabaseClient.js — anon-key-only client boundary
-  pages/           Route-level components (public, app, portal)
-  schemas/         zod validation schemas, one per form/domain
-  services/
-    demo/           localStorage-backed fake backend + seed data
-    supabase/       Real Supabase queries/RPC calls, same API surface as demo
-    index.js        Picks demo vs. live provider based on VITE_DEMO_MODE
-  styles/          Design tokens (CSS variables) + base reset
-  utils/           formatting, slugs, ids, the shared slot-generation engine,
-                    friendly error mapping
+Cadence comes pre-seeded with **Nova Wellness Studio** (`/b/nova-wellness-studio`), a multi-staff acupuncture, massage, and wellness clinic with existing services, staff schedules, appointments, invoices, and customers.
 
-supabase/
-  migrations/      001_schema, 002_constraints_indexes, 003_rls,
-                    004_functions_triggers, 005_seed (+ RLS test matrix)
-  functions/
-    create-public-booking/   Edge Function for anonymous booking
-```
+On the `/login` screen, click any of the **Quick Demo Login** buttons to authenticate instantly:
 
-### Why a "provider" abstraction?
+| Role | Email | Password | Access & Permissions |
+|---|---|---|---|
+| **Business Owner** | `owner@novawellness.demo` | `demo1234` | Full access to operations, finances, settings, reports, staff management, and data backup |
+| **Workspace Admin** | `admin@novawellness.demo` | `demo1234` | Calendar, appointments, customers, services, invoices, and reports |
+| **Staff Member 1** | `staff1@novawellness.demo` | `demo1234` | Personal calendar, assigned appointments, customer notes, notifications |
+| **Staff Member 2** | `staff2@novawellness.demo` | `demo1234` | Personal calendar, assigned appointments, customer notes, notifications |
+| **Customer** | `customer@novawellness.demo` | `demo1234` | Self-service customer portal (`/portal`): view bookings, cancel within policy window, view invoice history |
 
-`src/services/index.js` exports one flat API (`auth`, `businessApi`,
-`servicesApi`, `bookingApi`, `appointmentsApi`, `invoicesApi`, `paymentsApi`,
-`notificationsApi`, `reportsApi`, `portalApi`, ...) backed by **either**
-`services/demo/demoProvider.js` **or** `services/supabase/supabaseProvider.js`,
-selected by `VITE_DEMO_MODE`. Every page and hook in the app is written
-against this one contract, so switching from demo data to a real Supabase
-project requires **zero UI code changes** — only environment variables.
+*(Any password can also be entered manually as `demo1234`).*
 
 ---
 
-## Switching to a real Supabase backend
+## 🎨 Design System: Editorial Command Center
 
-See [`SUPABASE_SETUP.md`](./SUPABASE_SETUP.md) for the full walkthrough
-(migrations, Edge Function deployment, environment variables, and the
-manual RLS verification checklist). Short version:
+Cadence is built on the **Editorial Command Center** design direction, balancing high operational clarity with a tactile, premium editorial atmosphere:
+
+- **Primary Dark (`#171B24`) & Secondary Ink (`#242A36`)**: Deep ink navigation bar and structured sidebar hierarchies.
+- **Main Background (`#F4F5F1`)**: Warm neutral canvas that minimizes screen fatigue during daily operational use.
+- **Electric Lime (`#C7F36B`)**: High-contrast active accent for key state indicators, selected navigation items, and callouts.
+- **Soft Violet (`#7775E8`)**: Secondary accent for links, monetary metrics, and analytical curves.
+- **Tabular Numerals**: Financial figures, timestamps, and metric counters use monospace or `font-variant-numeric: tabular-nums` to ensure exact column alignment.
+- **Responsive Layout**: Adapts seamlessly from desktop command center to mobile bottom navigation.
+
+---
+
+## 🛠 Features & Capabilities
+
+### 1. Public Booking Experience
+- **Public Business Portal** (`/b/:slug`): Filterable service directory with duration, price, category badges, business contact details, and location.
+- **Multi-Step Booking Wizard** (`/b/:slug/book`):
+  1. Service selection
+  2. Staff member selection (or "Any available specialist")
+  3. Interactive calendar date picker
+  4. Real-time time-slot calculation with live availability
+  5. Customer details & special requests
+  6. Review & instant confirmation
+- **Booking Confirmation & Lookup** (`/b/:slug/book/confirmation/:code` & `/b/:slug/lookup`):
+  - Branded confirmation cards with copyable `CAD-XXXXXX` booking references
+  - Print receipt action (`window.print()`)
+  - Public booking status lookup by reference code
+
+### 2. Operational Command Center (`/app`)
+- **Dashboard**:
+  - Live greeting, date context, and business switcher
+  - 4 Key KPI cards (Today's Bookings, Total Appointments, Revenue Collected, Outstanding Invoices)
+  - Interactive Recharts 14-day revenue velocity area chart derived from real local records
+  - Today's appointment schedule breakdown
+  - Appointment status distribution chart
+  - Recent transaction ledger & quick navigation actions
+- **Calendar** (`/app/calendar`):
+  - Day and week agenda views
+  - Staff filtering and date navigation (Previous, Today, Next)
+  - Color-coded appointment blocks
+  - Direct modal booking from calendar
+- **Appointments** (`/app/appointments`):
+  - Search by client name, email, or booking reference
+  - Status filters (Confirmed, In Progress, Completed, Cancelled, No-Show)
+  - Detailed view (`/app/appointments/:id`): status progression following finite-state machine rules, internal notes, staff reassignment with conflict checks, invoice creation, and full activity timeline.
+- **Customer Directory** (`/app/customers`):
+  - Searchable client directory with total visit counters, lifetime spend, and outstanding balances
+  - Customer Profile (`/app/customers/:id`): appointment history, billing & invoice records, contact details, and internal client notes.
+- **Service Catalog** (`/app/services`):
+  - Duration, pricing, buffer times (before/after), category groupings, and color coding
+  - Safe deactivation/archiving preserving historical appointment integrity.
+- **Staff Management** (`/app/staff`):
+  - Team member roles (Owner, Admin, Staff)
+  - Availability scheduler by weekday (`/app/staff/:id`)
+  - Blocked time / leave manager withholding specific hours from client booking.
+- **Invoices & Billing** (`/app/invoices`):
+  - Draft, Issued, Paid, Partially Paid, Overdue, and Void states
+  - Line-item editor with real-time tax calculation
+  - Printable invoice layout (`/app/invoices/:id`) optimized for paper and PDF export.
+- **Simulated Payment Gateway** (`/app/payments`):
+  - Partial and full payment simulation
+  - Test scenario selector (Success vs. Declined/Failed) to verify application resilience under payment failure conditions
+  - Complete payment transaction ledger.
+- **Business Reports** (`/app/reports`):
+  - 30-day analytics powered by Recharts (Revenue curves, Booking volumes, Status distribution, Service popularity, Staff workload, Payment method breakdown, Client acquisition).
+- **Settings & Data Management** (`/app/settings`):
+  - Business information, timezone, currency, and brand color
+  - Booking lead times, cancellation policy windows, and approval requirements
+  - **Local Database Management**:
+    - **Reset Demo Data**: Restores database to fresh, deterministic state with relative dates
+    - **Export Database (JSON)**: Backs up entire database to a downloadable JSON file
+    - **Import Database (JSON)**: Restores a previously exported JSON backup with schema validation.
+
+### 3. Customer Self-Service Portal (`/portal`)
+- **My Bookings**: View upcoming and past appointments, view specialist assignments, cancel bookings within business policy windows.
+- **My Invoices**: Review issued invoices, paid amounts, and outstanding balances.
+- **Profile**: Update customer name and contact phone number.
+
+---
+
+## 🏛 Local-First Architecture
+
+Cadence has **zero remote backend dependencies**. All data is managed locally through an enterprise-grade client-side storage architecture located in `src/services/local/`:
+
+```
+src/services/
+├── index.js             # Unified service exports (localProvider & localStore)
+└── local/
+    ├── localStore.js    # Schema-versioned (v1) storage engine, corruption recovery, backup/restore
+    ├── localProvider.js # Business logic API contract, double-booking prevention, status state machine
+    └── localStore.test.js # Storage reliability test suites
+```
+
+### Architectural Highlights
+
+1. **Storage Isolation**:
+   - `cadence:database:v1` — Core multi-table relational database (businesses, services, staff, appointments, customers, invoices, invoice_items, payments, notifications, activity logs).
+   - `cadence:session:v1` — Authenticated demo session.
+   - `cadence:preferences:v1` — User preferences (e.g., active business workspace).
+   - Resetting demo data selectively purges only Cadence namespaces, leaving any unrelated domain keys untouched.
+2. **Deterministic Relative Dates**:
+   - Seed data uses relative time anchors (`now`, `+1 day`, `+2 days`, `-1 day`, `-3 days`) so that whenever the application is opened, the dashboard displays active appointments for *today*, *yesterday*, and the *upcoming week*.
+3. **Double-Booking & Conflict Guarantees**:
+   - Availability is calculated via `slotEngine.js` honoring staff working hours, buffer times, existing bookings, and blocked leave.
+   - Double-booking is authoritatively rejected at submission inside `createBookingInternal`, ensuring no race conditions can create overlapping sessions.
+4. **Finite State Machine for Appointments**:
+   - Strict status transitions: `pending` → `confirmed` → `checked_in` → `in_progress` → `completed`.
+   - Idempotent updates prevent invalid transitions while permitting redundant status updates.
+5. **Corruption Recovery**:
+   - If corrupted or invalid JSON is detected in `localStorage`, the engine automatically repairs the store, reloads clean seed records, logs a warning notice, and prevents white-screen crashes.
+
+---
+
+## 🧪 Testing & Verification
+
+The application is thoroughly verified across unit tests, static linting, and production builds:
 
 ```bash
-# .env
-VITE_SUPABASE_URL=https://your-project.supabase.co
-VITE_SUPABASE_PUBLISHABLE_KEY=your-anon-or-publishable-key
-VITE_DEMO_MODE=false
+# Run Vitest test suites
+npm test
+
+# Expected Output:
+# ✓ src/utils/slotEngine.test.js (7 tests)
+# ✓ src/services/local/localStore.test.js (5 tests)
+# ✓ src/services/demo/demoProvider.test.js (11 tests)
+# Test Files  3 passed (3)
+# Tests       23 passed (23)
+
+# Run oxlint
+npm run lint
+
+# Expected Output:
+# Found 4 warnings (Fast Refresh conventions) and 0 errors.
+
+# Run production build
+npm run build
+
+# Expected Output:
+# ✓ built in ~2.2s (0 errors)
 ```
 
 ---
 
-## Security model (summary)
+## 📄 License
 
-- **Row Level Security everywhere.** Every table is RLS-enabled; policies
-  are role- and ownership-scoped (owner/admin/staff/customer), never
-  `using (true)` for anything sensitive. See `supabase/migrations/003_rls.sql`.
-- **Server-side authority for money and time.** Price, tax, and duration are
-  always recomputed from `services`/`businesses` inside a Postgres RPC or
-  Edge Function — never trusted from a browser-submitted total. See
-  `004_functions_triggers.sql` and `functions/create-public-booking`.
-- **Double-booking is a database-level guarantee**, not just a UI check: a
-  `GIST` exclusion constraint (`appointments_no_overlap`) on
-  `(staff_member_id, tstzrange(start_at, end_at))` makes overlapping
-  "active" appointments for the same staff member physically impossible to
-  insert, regardless of what the client believes was available.
-- **No service-role key ever ships to the browser.** `src/lib/supabaseClient.js`
-  only ever holds the anon/publishable key. The service-role key exists
-  only inside the Edge Function runtime, for the one flow (anonymous public
-  booking) that needs to safely create a guest customer row.
-- **No real payment data anywhere.** `payments.method` is constrained to
-  `cash | demo_card | bank_transfer | wallet`; `demo_card` is explicitly a
-  simulation, never a real card processor integration.
-
----
-
-## Testing
-
-```bash
-npm test        # vitest — 18 tests: slot-engine correctness + demo-provider
-                 # integration (auth, double-booking rejection, invoice math,
-                 # payment simulation)
-npm run lint     # oxlint — 0 errors
-npm run build    # production build — 0 errors/warnings
-```
-
-The test suite runs against the **demo provider**, i.e. the actual code
-path exercised by the running app in this environment. It is not a
-substitute for running the RLS test matrix in
-`supabase/migrations/005_seed.sql` against a real Supabase project before
-production use — that has not been done here (no project access).
-
----
-
-## Known limitations / honest gaps
-
-- Public booking Edge Function computes weekday using UTC rather than the
-  business's configured timezone (documented inline in
-  `create-public-booking/index.ts`); demo mode's client-side slot engine
-  uses local browser time. For businesses far from UTC this can shift which
-  calendar day a slot is grouped under near midnight — a timezone-aware
-  rewrite is a follow-up.
-- `businesses` RLS exposes all columns (including operational settings
-  like `tax_rate_percent`) to anyone via the public "active businesses"
-  policy, since Postgres RLS filters rows, not columns. A public-safe view
-  is the recommended hardening step before production (noted in
-  `003_rls.sql`).
-- Reporting RPCs read directly from source tables; fine at demo scale, but
-  should move to materialized views for a business with a large appointment
-  history.
-- Staff invitations (`membership_invitations`) record intent only — actually
-  emailing an invite link and completing the accept flow is out of scope
-  for this build.
+MIT. Built with craft for appointment-driven businesses. Run your business in rhythm.

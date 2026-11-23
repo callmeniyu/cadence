@@ -73,15 +73,15 @@ export default function Customers() {
                   {data.rows.map((c) => (
                     <tr key={c.id}>
                       <td>
-                        <Link to={`/app/customers/${c.id}`} className="sf-flex sf-items-center sf-gap-2" style={{ color: 'var(--sf-brand-600)', fontWeight: 700 }}>
-                          <span className="sf-avatar" style={{ width: 28, height: 28, fontSize: 11 }}>{initials(c.full_name)}</span>
+                        <Link to={`/app/customers/${c.id}`} className="sf-flex sf-items-center sf-gap-2" style={{ color: 'var(--cd-primary-dark, #171B24)', fontWeight: 700, textDecoration: 'none' }}>
+                          <span className="sf-avatar" style={{ width: 28, height: 28, fontSize: 11, background: 'var(--cd-primary-dark, #171B24)', color: 'var(--cd-accent-lime, #C7F36B)' }}>{initials(c.full_name)}</span>
                           {c.full_name}
                         </Link>
                       </td>
                       <td className="sf-text-sm">{c.email}<br /><span className="sf-muted sf-text-xs">{c.phone}</span></td>
-                      <td>{c.appointmentCount}</td>
-                      <td>{formatMoney(c.totalPaid, currentBusiness?.currency)}</td>
-                      <td>{c.outstanding > 0 ? <span style={{ color: 'var(--sf-danger-500)', fontWeight: 700 }}>{formatMoney(c.outstanding, currentBusiness?.currency)}</span> : '—'}</td>
+                      <td style={{ fontVariantNumeric: 'tabular-nums' }}>{c.appointmentCount}</td>
+                      <td style={{ fontVariantNumeric: 'tabular-nums' }}>{formatMoney(c.totalPaid, currentBusiness?.currency)}</td>
+                      <td>{c.outstanding > 0 ? <span style={{ color: 'var(--cd-danger, #D75C5C)', fontWeight: 700, fontVariantNumeric: 'tabular-nums' }}>{formatMoney(c.outstanding, currentBusiness?.currency)}</span> : '—'}</td>
                       <td className="sf-text-xs sf-muted">{formatDate(c.created_at)}</td>
                     </tr>
                   ))}
